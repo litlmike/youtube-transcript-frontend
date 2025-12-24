@@ -17,6 +17,14 @@ export interface ITranscriptEntry {
   duration: number;
 }
 
+export interface ITranscript {
+  video_id: string;
+  language: string;
+  language_code: string;
+  is_generated: boolean;
+  snippets: ITranscriptEntry[];
+}
+
 export interface IAvailableSubtitles {
   video_id: string;
   manual_subtitles: string[];
@@ -25,7 +33,7 @@ export interface IAvailableSubtitles {
 
 export interface IVideoResponse {
   info: IVideoInfo;
-  transcript: ITranscriptEntry[] | null;
+  transcript: ITranscript | null;
   available_subtitles: IAvailableSubtitles;
 }
 

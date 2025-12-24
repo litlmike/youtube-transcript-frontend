@@ -117,7 +117,7 @@ function App(): React.ReactElement {
                   {hasTranscript && transcript && (
                     <div className="mt-3">
                       <TranscriptActions
-                        entries={transcript}
+                        entries={transcript.snippets}
                         videoId={videoInfo.video_id}
                         videoTitle={videoInfo.title}
                         format={format}
@@ -133,8 +133,8 @@ function App(): React.ReactElement {
             <CardContent>
               {hasTranscript && transcript ? (
                 <TranscriptDisplay
-                  entries={transcript}
-                  language="en"
+                  entries={transcript.snippets}
+                  language={transcript.language}
                 />
               ) : (
                 <div className="text-center py-8">

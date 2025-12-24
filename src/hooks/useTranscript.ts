@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getVideoData, getTranscriptRaw, ApiClientError } from '@/lib/api';
-import type { IVideoInfo, ITranscriptEntry, TranscriptFormat } from '@/types';
+import type { IVideoInfo, ITranscript, TranscriptFormat } from '@/types';
 
 interface UseTranscriptState {
   videoInfo: IVideoInfo | null;
-  transcript: ITranscriptEntry[] | null;
+  transcript: ITranscript | null;
   rawTranscript: string | null;
   isLoading: boolean;
   error: string | null;
@@ -47,7 +47,9 @@ export function useTranscript(): UseTranscriptReturn {
     try {
       const videoData = await getVideoData(videoId);
 
-      const hasTranscript = videoData.transcript !== null && videoData.transcript.length > 0;
+      const hasTranscript = videoData.transcript !== null &&
+        videoData.transcript.snippets !== undefined &&
+        videoData.transcript.snippets.length > 0;
 
       setState((prev) => ({
         ...prev,
