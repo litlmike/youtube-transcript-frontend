@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { VideoInput } from '@/components/VideoInput';
 import { TranscriptDisplay } from '@/components/TranscriptDisplay';
+import { TranscriptActions } from '@/components/TranscriptActions';
 import { useTranscript } from '@/hooks/useTranscript';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -20,9 +21,12 @@ function App(): React.ReactElement {
   const {
     videoInfo,
     transcript,
+    rawTranscript,
     isLoading,
     error,
+    format,
     fetchTranscript,
+    changeFormat,
   } = useTranscript();
 
   const handleVideoSubmit = useCallback(
@@ -89,6 +93,17 @@ function App(): React.ReactElement {
                   <CardDescription className="mt-1">
                     {videoInfo.channel} • {formatDuration(videoInfo.duration)}
                   </CardDescription>
+                  <div className="mt-3">
+                    <TranscriptActions
+                      entries={transcript.transcript}
+                      videoId={videoInfo.id}
+                      videoTitle={videoInfo.title}
+                      format={format}
+                      rawTranscript={rawTranscript}
+                      isLoading={isLoading}
+                      onFormatChange={changeFormat}
+                    />
+                  </div>
                 </div>
               </div>
             </CardHeader>
