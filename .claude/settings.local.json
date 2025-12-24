@@ -14,7 +14,13 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npm run dev:*)",
-      "WebFetch(domain:youtube-transcript.solomonadvising.online)"
+      "WebFetch(domain:youtube-transcript.solomonadvising.online)",
+      "mcp__github__get_me",
+      "mcp__github__create_repository",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "mcp__github__issue_write"
     ]
   }
 }

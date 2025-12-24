@@ -137,11 +137,12 @@ function App(): React.ReactElement {
                   language={transcript.language}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    No transcript available for this video.
+                <div className="text-center py-8 bg-muted/50 rounded-lg">
+                  <div className="text-4xl mb-3">📝</div>
+                  <p className="font-medium text-foreground">
+                    No transcript available
                   </p>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground mt-1">
                     This video doesn't have captions or subtitles enabled.
                   </p>
                 </div>

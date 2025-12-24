@@ -59,7 +59,7 @@ export function useTranscript(): UseTranscriptReturn {
         rawTranscript: null,
         format: 'json',
         hasTranscript,
-        error: hasTranscript ? null : 'No transcript available for this video',
+        error: null,
       }));
     } catch (err) {
       const message =
