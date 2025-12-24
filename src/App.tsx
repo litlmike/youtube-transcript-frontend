@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { VideoInput } from '@/components/VideoInput';
 import { TranscriptDisplay } from '@/components/TranscriptDisplay';
 import { TranscriptActions } from '@/components/TranscriptActions';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTranscript } from '@/hooks/useTranscript';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -37,13 +38,18 @@ function App(): React.ReactElement {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background transition-colors">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">YouTube Transcript</h1>
-          <p className="text-muted-foreground">
-            Fetch and download transcripts from any YouTube video
-          </p>
+        <header className="mb-8">
+          <div className="flex justify-end mb-4">
+            <ThemeToggle />
+          </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-2">YouTube Transcript</h1>
+            <p className="text-muted-foreground">
+              Fetch and download transcripts from any YouTube video
+            </p>
+          </div>
         </header>
 
         <Card>
