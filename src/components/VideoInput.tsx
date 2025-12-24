@@ -8,9 +8,16 @@ interface VideoInputProps {
   isLoading?: boolean;
 }
 
+const TEST_VIDEO_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
 export function VideoInput({ onSubmit, isLoading = false }: VideoInputProps): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  const handleTryExample = useCallback((): void => {
+    setInputValue(TEST_VIDEO_URL);
+    setError(null);
+  }, []);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>): void => {
@@ -69,6 +76,15 @@ export function VideoInput({ onSubmit, isLoading = false }: VideoInputProps): Re
       )}
       <p className="text-xs text-muted-foreground">
         Supported formats: youtube.com/watch?v=..., youtu.be/..., or just the video ID
+        {' • '}
+        <button
+          type="button"
+          onClick={handleTryExample}
+          disabled={isLoading}
+          className="underline hover:text-foreground transition-colors"
+        >
+          Try an example
+        </button>
       </p>
     </form>
   );
