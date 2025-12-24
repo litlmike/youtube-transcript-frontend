@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, memo } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -82,9 +83,11 @@ export const TranscriptActions = memo(function TranscriptActions({
     try {
       await navigator.clipboard.writeText(transcriptContent);
       setCopyStatus('copied');
+      toast.success('Copied to clipboard');
       setTimeout(() => setCopyStatus('idle'), 2000);
     } catch {
       setCopyStatus('error');
+      toast.error('Failed to copy to clipboard');
       setTimeout(() => setCopyStatus('idle'), 2000);
     }
   }, [transcriptContent]);
@@ -101,6 +104,7 @@ export const TranscriptActions = memo(function TranscriptActions({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${filename}`);
   }, [transcriptContent, format, videoId, videoTitle]);
 
   const handleFormatChange = useCallback(

@@ -1,6 +1,17 @@
 import type { IVideoResponse, TranscriptFormat } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+function getApiBaseUrl(): string {
+  const url = import.meta.env.VITE_API_BASE_URL;
+  if (!url) {
+    throw new Error(
+      'Missing required environment variable: VITE_API_BASE_URL. ' +
+      'Please create a .env file with VITE_API_BASE_URL set to your API endpoint.'
+    );
+  }
+  return url;
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 interface ApiError {
   message: string;
