@@ -1,24 +1,16 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { VideoInput } from '@/components/VideoInput';
 import { TranscriptDisplay } from '@/components/TranscriptDisplay';
 import { TranscriptActions } from '@/components/TranscriptActions';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTranscript } from '@/hooks/useTranscript';
+import { formatDuration } from '@/lib/formatters';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-
-function formatDuration(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
-}
+import { Button } from '@/components/ui/button';
 
 function App(): React.ReactElement {
+  const [lastVideoId, setLastVideoId] = useState<string | null>(null);
   const {
     videoInfo,
     transcript,
@@ -33,10 +25,17 @@ function App(): React.ReactElement {
 
   const handleVideoSubmit = useCallback(
     (videoId: string): void => {
+      setLastVideoId(videoId);
       void fetchTranscript(videoId);
     },
     [fetchTranscript]
   );
+
+  const handleRetry = useCallback((): void => {
+    if (lastVideoId) {
+      void fetchTranscript(lastVideoId);
+    }
+  }, [fetchTranscript, lastVideoId]);
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -68,7 +67,16 @@ function App(): React.ReactElement {
               <CardTitle className="text-destructive">Error</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-destructive">{error}</p>
+              <p className="text-destructive mb-4">{error}</p>
+              {lastVideoId && (
+                <Button
+                  variant="outline"
+                  onClick={handleRetry}
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Retrying...' : 'Try Again'}
+                </Button>
+              )}
             </CardContent>
           </Card>
         )}

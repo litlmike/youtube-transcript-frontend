@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import { Button } from '@/components/ui/button';
 
-export function ThemeToggle(): React.ReactElement {
+export const ThemeToggle = memo(function ThemeToggle(): React.ReactElement {
   const { resolvedTheme, toggleTheme } = useTheme();
 
   return (
@@ -19,7 +20,7 @@ export function ThemeToggle(): React.ReactElement {
       )}
     </Button>
   );
-}
+});
 
 function SunIcon({ className }: { className?: string }): React.ReactElement {
   return (

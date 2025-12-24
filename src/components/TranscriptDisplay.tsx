@@ -1,23 +1,13 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { formatTimestamp } from '@/lib/formatters';
 import type { ITranscriptEntry } from '@/types';
 
 interface TranscriptDisplayProps {
   entries: ITranscriptEntry[];
   language: string;
-}
-
-function formatTimestamp(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
 
 function highlightText(text: string, searchTerm: string): React.ReactNode {
@@ -40,7 +30,7 @@ function highlightText(text: string, searchTerm: string): React.ReactNode {
   });
 }
 
-export function TranscriptDisplay({
+export const TranscriptDisplay = memo(function TranscriptDisplay({
   entries,
   language,
 }: TranscriptDisplayProps): React.ReactElement {
@@ -118,4 +108,4 @@ export function TranscriptDisplay({
       </ScrollArea>
     </div>
   );
-}
+});

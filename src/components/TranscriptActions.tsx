@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -7,6 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { formatTimestamp, formatTimestampSrt, formatTimestampVtt } from '@/lib/formatters';
+import { getFileExtension, getMimeType, sanitizeFilename } from '@/lib/file-utils';
 import type { ITranscriptEntry, TranscriptFormat } from '@/types';
 
 interface TranscriptActionsProps {
@@ -17,35 +19,6 @@ interface TranscriptActionsProps {
   rawTranscript: string | null;
   isLoading: boolean;
   onFormatChange: (format: TranscriptFormat) => void;
-}
-
-function formatTimestamp(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  }
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
-}
-
-function formatTimestampSrt(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  const ms = Math.floor((seconds % 1) * 1000);
-
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')},${ms.toString().padStart(3, '0')}`;
-}
-
-function formatTimestampVtt(seconds: number): string {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  const ms = Math.floor((seconds % 1) * 1000);
-
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
 }
 
 function generateTranscriptContent(
@@ -70,7 +43,7 @@ function generateTranscriptContent(
         })
         .join('\n');
 
-    case 'vtt':
+    case 'vtt': {
       const header = 'WEBVTT\n\n';
       const content = entries
         .map((entry) => {
@@ -80,48 +53,14 @@ function generateTranscriptContent(
         })
         .join('\n');
       return header + content;
+    }
 
     default:
       return '';
   }
 }
 
-function getFileExtension(format: TranscriptFormat): string {
-  switch (format) {
-    case 'json':
-      return 'json';
-    case 'text':
-      return 'txt';
-    case 'srt':
-      return 'srt';
-    case 'vtt':
-      return 'vtt';
-    default:
-      return 'txt';
-  }
-}
-
-function getMimeType(format: TranscriptFormat): string {
-  switch (format) {
-    case 'json':
-      return 'application/json';
-    case 'vtt':
-      return 'text/vtt';
-    case 'srt':
-      return 'application/x-subrip';
-    default:
-      return 'text/plain';
-  }
-}
-
-function sanitizeFilename(title: string): string {
-  return title
-    .replace(/[<>:"/\\|?*]/g, '')
-    .replace(/\s+/g, '_')
-    .substring(0, 100);
-}
-
-export function TranscriptActions({
+export const TranscriptActions = memo(function TranscriptActions({
   entries,
   videoId,
   videoTitle,
@@ -196,6 +135,12 @@ export function TranscriptActions({
         </SelectContent>
       </Select>
 
+      {isLoading && (
+        <span className="text-sm text-muted-foreground animate-pulse">
+          Loading...
+        </span>
+      )}
+
       <Button
         variant="outline"
         size="default"
@@ -215,4 +160,4 @@ export function TranscriptActions({
       </Button>
     </div>
   );
-}
+});

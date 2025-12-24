@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { extractVideoId } from '@/lib/api';
@@ -10,7 +10,7 @@ interface VideoInputProps {
 
 const TEST_VIDEO_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
-export function VideoInput({ onSubmit, isLoading = false }: VideoInputProps): React.ReactElement {
+export const VideoInput = memo(function VideoInput({ onSubmit, isLoading = false }: VideoInputProps): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -88,4 +88,4 @@ export function VideoInput({ onSubmit, isLoading = false }: VideoInputProps): Re
       </p>
     </form>
   );
-}
+});
