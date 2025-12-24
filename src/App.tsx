@@ -90,13 +90,27 @@ function App(): React.ReactElement {
           <Card className="mt-4">
             <CardHeader>
               <div className="flex gap-4">
-                <img
-                  src={videoInfo.thumbnail}
-                  alt={videoInfo.title}
-                  className="w-32 h-auto rounded-md object-cover"
-                />
+                <a
+                  href={`https://www.youtube.com/watch?v=${videoInfo.video_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0"
+                >
+                  <img
+                    src={videoInfo.thumbnail}
+                    alt={videoInfo.title}
+                    className="w-32 h-auto rounded-md object-cover hover:opacity-80 transition-opacity"
+                  />
+                </a>
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="line-clamp-2">{videoInfo.title}</CardTitle>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${videoInfo.video_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    <CardTitle className="line-clamp-2">{videoInfo.title}</CardTitle>
+                  </a>
                   <CardDescription className="mt-1">
                     {videoInfo.channel} • {formatDuration(videoInfo.duration)}
                   </CardDescription>
