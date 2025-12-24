@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getVideoInfo, getTranscript, ApiClientError } from '@/lib/api';
-import type { IVideoInfo, ITranscriptResponse, TranscriptFormat } from '@/types';
+import { getVideoData, getTranscriptRaw, ApiClientError } from '@/lib/api';
+import type { IVideoInfo, ITranscriptEntry, TranscriptFormat } from '@/types';
 
 interface UseTranscriptState {
   videoInfo: IVideoInfo | null;
-  transcript: ITranscriptResponse | null;
+  transcript: ITranscriptEntry[] | null;
   rawTranscript: string | null;
   isLoading: boolean;
   error: string | null;
   format: TranscriptFormat;
+  hasTranscript: boolean;
 }
 
 interface UseTranscriptReturn extends UseTranscriptState {
@@ -24,6 +25,7 @@ const initialState: UseTranscriptState = {
   isLoading: false,
   error: null,
   format: 'json',
+  hasTranscript: false,
 };
 
 export function useTranscript(): UseTranscriptReturn {
@@ -38,23 +40,24 @@ export function useTranscript(): UseTranscriptReturn {
       videoInfo: null,
       transcript: null,
       rawTranscript: null,
+      hasTranscript: false,
     }));
     setCurrentVideoId(videoId);
 
     try {
-      // Fetch video info and transcript in parallel
-      const [videoInfo, transcriptData] = await Promise.all([
-        getVideoInfo(videoId),
-        getTranscript(videoId, 'json'),
-      ]);
+      const videoData = await getVideoData(videoId);
+
+      const hasTranscript = videoData.transcript !== null && videoData.transcript.length > 0;
 
       setState((prev) => ({
         ...prev,
         isLoading: false,
-        videoInfo,
-        transcript: transcriptData as ITranscriptResponse,
+        videoInfo: videoData.info,
+        transcript: videoData.transcript,
         rawTranscript: null,
         format: 'json',
+        hasTranscript,
+        error: hasTranscript ? null : 'No transcript available for this video',
       }));
     } catch (err) {
       const message =
@@ -62,7 +65,7 @@ export function useTranscript(): UseTranscriptReturn {
           ? err.message
           : err instanceof Error
             ? err.message
-            : 'Failed to fetch transcript';
+            : 'Failed to fetch video data';
 
       setState((prev) => ({
         ...prev,
@@ -76,21 +79,21 @@ export function useTranscript(): UseTranscriptReturn {
     setState((prev) => ({ ...prev, format: newFormat }));
   }, []);
 
-  // Refetch transcript when format changes
+  // Refetch transcript when format changes to non-JSON
   useEffect(() => {
-    if (!currentVideoId || state.format === 'json') {
+    if (!currentVideoId || state.format === 'json' || !state.hasTranscript) {
       return;
     }
 
     const fetchRawTranscript = async (): Promise<void> => {
-      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+      setState((prev) => ({ ...prev, isLoading: true }));
 
       try {
-        const rawData = await getTranscript(currentVideoId, state.format);
+        const rawData = await getTranscriptRaw(currentVideoId, state.format);
         setState((prev) => ({
           ...prev,
           isLoading: false,
-          rawTranscript: rawData as string,
+          rawTranscript: rawData,
         }));
       } catch (err) {
         const message =
@@ -109,7 +112,7 @@ export function useTranscript(): UseTranscriptReturn {
     };
 
     void fetchRawTranscript();
-  }, [currentVideoId, state.format]);
+  }, [currentVideoId, state.format, state.hasTranscript]);
 
   const reset = useCallback((): void => {
     setState(initialState);

@@ -1,9 +1,14 @@
 export interface IVideoInfo {
-  id: string;
+  video_id: string;
   title: string;
+  description: string;
   thumbnail: string;
   duration: number;
   channel: string;
+  uploader: string;
+  upload_date: string;
+  view_count: number;
+  like_count: number;
 }
 
 export interface ITranscriptEntry {
@@ -12,10 +17,16 @@ export interface ITranscriptEntry {
   duration: number;
 }
 
-export interface ITranscriptResponse {
+export interface IAvailableSubtitles {
   video_id: string;
-  language: string;
-  transcript: ITranscriptEntry[];
+  manual_subtitles: string[];
+  automatic_captions: string[];
+}
+
+export interface IVideoResponse {
+  info: IVideoInfo;
+  transcript: ITranscriptEntry[] | null;
+  available_subtitles: IAvailableSubtitles;
 }
 
 export type TranscriptFormat = 'json' | 'text' | 'srt' | 'vtt';

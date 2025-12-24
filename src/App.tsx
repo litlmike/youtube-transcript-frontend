@@ -26,6 +26,7 @@ function App(): React.ReactElement {
     isLoading,
     error,
     format,
+    hasTranscript,
     fetchTranscript,
     changeFormat,
   } = useTranscript();
@@ -61,7 +62,7 @@ function App(): React.ReactElement {
           </CardContent>
         </Card>
 
-        {error && (
+        {error && !videoInfo && (
           <Card className="mt-4 border-destructive">
             <CardHeader>
               <CardTitle className="text-destructive">Error</CardTitle>
@@ -72,7 +73,7 @@ function App(): React.ReactElement {
           </Card>
         )}
 
-        {isLoading && (
+        {isLoading && !videoInfo && (
           <Card className="mt-4">
             <CardHeader>
               <Skeleton className="h-6 w-3/4" />
@@ -85,7 +86,7 @@ function App(): React.ReactElement {
           </Card>
         )}
 
-        {!isLoading && videoInfo && transcript && (
+        {!isLoading && videoInfo && (
           <Card className="mt-4">
             <CardHeader>
               <div className="flex gap-4">
@@ -99,25 +100,38 @@ function App(): React.ReactElement {
                   <CardDescription className="mt-1">
                     {videoInfo.channel} • {formatDuration(videoInfo.duration)}
                   </CardDescription>
-                  <div className="mt-3">
-                    <TranscriptActions
-                      entries={transcript.transcript}
-                      videoId={videoInfo.id}
-                      videoTitle={videoInfo.title}
-                      format={format}
-                      rawTranscript={rawTranscript}
-                      isLoading={isLoading}
-                      onFormatChange={changeFormat}
-                    />
-                  </div>
+                  {hasTranscript && transcript && (
+                    <div className="mt-3">
+                      <TranscriptActions
+                        entries={transcript}
+                        videoId={videoInfo.video_id}
+                        videoTitle={videoInfo.title}
+                        format={format}
+                        rawTranscript={rawTranscript}
+                        isLoading={isLoading}
+                        onFormatChange={changeFormat}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <TranscriptDisplay
-                entries={transcript.transcript}
-                language={transcript.language}
-              />
+              {hasTranscript && transcript ? (
+                <TranscriptDisplay
+                  entries={transcript}
+                  language="en"
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    No transcript available for this video.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    This video doesn't have captions or subtitles enabled.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

@@ -1,4 +1,4 @@
-import type { IVideoInfo, ITranscriptResponse, TranscriptFormat } from '@/types';
+import type { IVideoResponse, TranscriptFormat } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -52,16 +52,16 @@ export function extractVideoId(input: string): string | null {
   return null;
 }
 
-export async function getVideoInfo(videoId: string): Promise<IVideoInfo> {
-  const response = await fetch(`${API_BASE_URL}/api/video/${videoId}/info`);
-  return handleResponse<IVideoInfo>(response);
+export async function getVideoData(videoId: string): Promise<IVideoResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/video/${videoId}`);
+  return handleResponse<IVideoResponse>(response);
 }
 
-export async function getTranscript(
+export async function getTranscriptRaw(
   videoId: string,
-  format: TranscriptFormat = 'json',
+  format: TranscriptFormat,
   languages: string = 'en'
-): Promise<ITranscriptResponse | string> {
+): Promise<string> {
   const params = new URLSearchParams({
     format,
     languages,
@@ -71,11 +71,6 @@ export async function getTranscript(
     `${API_BASE_URL}/api/video/${videoId}/transcript?${params.toString()}`
   );
 
-  if (format === 'json') {
-    return handleResponse<ITranscriptResponse>(response);
-  }
-
-  // For text, srt, vtt formats, return raw text
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'An error occurred' })) as ApiError;
     throw new ApiClientError(
@@ -85,11 +80,6 @@ export async function getTranscript(
   }
 
   return response.text();
-}
-
-export async function checkHealth(): Promise<{ status: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/health`);
-  return handleResponse<{ status: string }>(response);
 }
 
 export { ApiClientError };
