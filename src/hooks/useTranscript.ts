@@ -24,7 +24,7 @@ const initialState: UseTranscriptState = {
   rawTranscript: null,
   isLoading: false,
   error: null,
-  format: 'json',
+  format: 'text',
   hasTranscript: false,
 };
 
@@ -57,7 +57,7 @@ export function useTranscript(): UseTranscriptReturn {
         videoInfo: videoData.info,
         transcript: videoData.transcript,
         rawTranscript: null,
-        format: 'json',
+        format: 'text',
         hasTranscript,
         error: null,
       }));
